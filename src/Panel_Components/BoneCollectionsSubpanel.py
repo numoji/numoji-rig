@@ -49,13 +49,17 @@ class BoneCollectionAction(bpy.types.Operator):
         armature = context.active_object
         self.selected_collections = set()
 
-        self.selected_bone_names = set([bone.name for bone in bpy.context.selected_pose_bones])
-        for collection in armature.data.collections:
-            if not collection.is_visible:
-                continue
-            for collection_bone in collection.bones:
-                if collection_bone.name in self.selected_bone_names:
-                    self.selected_collections.add(collection.name)
+        if bpy.context.active_object.mode == "POSE":
+            self.selected_bone_names = set([bone.name for bone in bpy.context.selected_pose_bones])
+            for collection in armature.data.collections:
+                if not collection.is_visible:
+                    continue
+                for collection_bone in collection.bones:
+                    if collection_bone.name in self.selected_bone_names:
+                        self.selected_collections.add(collection.name)
+        else:
+            self.selected_bone_names = set()
+            self.selected_collections = set()
 
         if action == "TOGGLE_SOLO":
             self.toggle_solo(armature)
@@ -178,13 +182,16 @@ class BoneCollectionsSubpanel(CollapsibleHeaderSubpanel):
         collection_groups_layout = layout.column(align=True)
         self.selected_collections = set()
 
-        selected_bone_names = set([bone.name for bone in bpy.context.selected_pose_bones])
-        for collection in armature.data.collections:
-            if not collection.is_visible:
-                continue
-            for collection_bone in collection.bones:
-                if collection_bone.name in selected_bone_names:
-                    self.selected_collections.add(collection.name)
+        if bpy.context.active_object.mode == "POSE":
+            selected_bone_names = set([bone.name for bone in bpy.context.selected_pose_bones])
+            for collection in armature.data.collections:
+                if not collection.is_visible:
+                    continue
+                for collection_bone in collection.bones:
+                    if collection_bone.name in selected_bone_names:
+                        self.selected_collections.add(collection.name)
+        else:
+            self.selected_collections = set()
 
         for idx, group in enumerate(bone_groups):
             group_obj = armature.data.roblox_rig_bone_groups[idx+1]
