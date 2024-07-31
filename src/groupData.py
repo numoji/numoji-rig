@@ -48,15 +48,28 @@ property_groups = [
         "name": "Arms Properties",
         "rows": [
             [("ARM_FOLLOW.L", "L Follow Shoulder"), ("ARM_FOLLOW.R", "R Follow Shoulder")],
-            [("ARM_FK_IK.L", "L FK ⇔ IK"), ("ARM_FK_IK.R", "R FK ⇔ IK")],
-            [("ARM_IK_STRETCH.L", "L IK Stretch"), ("ARM_IK_STRETCH.R", "R IK Stretch")],
+            [("ARM_FK_IK.L", "L Arm FK ⇔ IK"), ("ARM_FK_IK.R", "R Arm FK ⇔ IK")],
+            [("ARM_IK_STRETCH.L", "L Arm Stretch Bias"), ("ARM_IK_STRETCH.R", "R Arm Stretch Bias")],
         ]
     },
     {
         "name": "Legs Properties",
         "rows": [
-            [("LEG_FK_IK.L", "L FK ⇔ IK"), ("LEG_FK_IK.R", "R FK ⇔ IK")],
-            [("LEG_IK_STRETCH.L", "L IK Stretch"), ("LEG_IK_STRETCH.R", "R IK Stretch")],
+            [("LEG_FK_IK.L", "L Leg FK ⇔ IK"), ("LEG_FK_IK.R", "R Leg FK ⇔ IK")],
+            [("LEG_IK_STRETCH.L", "L Leg Stretch Bias"), ("LEG_IK_STRETCH.R", "R Leg Stretch Bias")],
+        ]
+    },
+    {
+        "name": "Parent Properties",
+        "rows": [
+            [("HAND_PARENT.L", "L Hand Parent"), ("HAND_PARENT.R", "R Hand Parent")],
+            [("FOOT_PARENT.L", "L Leg Parent"), ("FOOT_PARENT.R", "R Leg Parent")],
+            [("BOARD_PARENT", "Board Parent")],
         ]
     }
+]
+
+tool_groups = [
+    {"name": "IK/FK Snap"},
+    {"name": "Reparenting"}
 ]
