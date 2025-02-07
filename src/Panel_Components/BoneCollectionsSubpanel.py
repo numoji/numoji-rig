@@ -22,7 +22,7 @@ class BoneCollectionAction(bpy.types.Operator):
     def poll(self, context):
         try:
             armature = context.view_layer.objects.active
-            return 'is_roblox_rig' in armature.data
+            return "is_roblox_rig" in armature.data
         except (AttributeError, KeyError, TypeError):
             return False
 
@@ -50,7 +50,9 @@ class BoneCollectionAction(bpy.types.Operator):
         self.selected_collections = set()
 
         if bpy.context.active_object.mode == "POSE":
-            self.selected_bone_names = set([bone.name for bone in bpy.context.selected_pose_bones])
+            self.selected_bone_names = set(
+                [bone.name for bone in bpy.context.selected_pose_bones]
+            )
             for collection in armature.data.collections:
                 if not collection.is_visible:
                     continue
@@ -107,11 +109,16 @@ class BoneCollectionAction(bpy.types.Operator):
 
         if len(self.selected_collections) == 0:
             bpy.ops.armature.collection_select()
-        elif len(self.selected_collections) == 1 and collection.name in self.selected_collections:
+        elif (
+            len(self.selected_collections) == 1
+            and collection.name in self.selected_collections
+        ):
             bpy.ops.armature.collection_deselect()
         else:
             bpy.ops.pose.select_all(action="DESELECT")
-            if not self.selected_bone_names.issubset(set([bone.name for bone in collection.bones])):
+            if not self.selected_bone_names.issubset(
+                set([bone.name for bone in collection.bones])
+            ):
                 bpy.ops.armature.collection_select()
 
 
@@ -149,14 +156,23 @@ class BoneCollectionsSubpanel(CollapsibleHeaderSubpanel):
         is_solo = collection.is_solo
         is_visible = collection.is_visible
         is_selected = collection_name in self.selected_collections
-        is_active = is_solo if is_solo_active else is_visible if not is_solo_active else False
+        is_active = (
+            is_solo if is_solo_active else is_visible if not is_solo_active else False
+        )
 
         if display_name != "" or is_solo:
             visiblity_op_container = layout.row(align=True)
             visiblity_op_container.active = is_active
 
-            visiblity_icon = "SOLO_ON" if is_solo else "HIDE_OFF" if is_visible else "HIDE_ON"
-            visiblity_op = visiblity_op_container.operator("roblox_rig_ui.bone_collection_toggle", text="", icon=visiblity_icon, emboss=True)
+            visiblity_icon = (
+                "SOLO_ON" if is_solo else "HIDE_OFF" if is_visible else "HIDE_ON"
+            )
+            visiblity_op = visiblity_op_container.operator(
+                "roblox_rig_ui.bone_collection_toggle",
+                text="",
+                icon=visiblity_icon,
+                emboss=True,
+            )
             visiblity_op.collection_name = collection_name
             visiblity_op.prop_name = "is_solo" if collection.is_solo else "is_visible"
 
@@ -168,7 +184,13 @@ class BoneCollectionsSubpanel(CollapsibleHeaderSubpanel):
         action_op_container.scale_x = scale
 
         highlight = is_selected if not is_solo_active or is_solo else False
-        action_op = action_op_container.operator("roblox_rig_ui.bone_collection_action", text=display_name, icon=icon_name, emboss=True, depress=highlight)
+        action_op = action_op_container.operator(
+            "roblox_rig_ui.bone_collection_action",
+            text=display_name,
+            icon=icon_name,
+            emboss=True,
+            depress=highlight,
+        )
         action_op.collection_name = collection_name
         # button_row.prop(collection, "is_visible", text=display_name, icon=icon_name, toggle=True)
 
@@ -183,7 +205,9 @@ class BoneCollectionsSubpanel(CollapsibleHeaderSubpanel):
         self.selected_collections = set()
 
         if bpy.context.active_object.mode == "POSE":
-            selected_bone_names = set([bone.name for bone in bpy.context.selected_pose_bones])
+            selected_bone_names = set(
+                [bone.name for bone in bpy.context.selected_pose_bones]
+            )
             for collection in armature.data.collections:
                 if not collection.is_visible:
                     continue
@@ -194,7 +218,7 @@ class BoneCollectionsSubpanel(CollapsibleHeaderSubpanel):
             self.selected_collections = set()
 
         for idx, group in enumerate(bone_groups):
-            group_obj = armature.data.roblox_rig_bone_groups[idx+1]
+            group_obj = armature.data.roblox_rig_bone_groups[idx + 1]
             self.draw_collapse_header(collection_groups_layout, group_obj)
             if group_obj.visible:
                 # group_layout = collection_groups_layout.column()

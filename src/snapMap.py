@@ -2,7 +2,7 @@
 arms_fk_to_ik = {
     "ARM_FK": "MCH_IK_INT_ARM",
     "FOREARM_FK": "MCH_IK_INT_FOREARM",
-    "HAND_FK": "MCH_IK_INT_HAND"
+    "HAND_FK": "MCH_IK_INT_HAND",
 }
 
 arms_ik_to_fk = {
@@ -13,7 +13,7 @@ arms_ik_to_fk = {
 legs_fk_to_ik = {
     "LEG_FK": "MCH_IK_INT_LEG",
     "SHIN_FK": "MCH_IK_INT_SHIN",
-    "FOOT_FK": "MCH_IK_INT_FOOT"
+    "FOOT_FK": "MCH_IK_INT_FOOT",
 }
 
 legs_ik_to_fk = {

@@ -16,13 +16,25 @@ class BonePropertiesSubpanel(CollapsibleHeaderSubpanel):
 
         prop_value = property_bone[prop_name]
         prop_type = type(prop_value)
-        prop_custom_name_display = display_name if display_name is not None else prop_name
+        prop_custom_name_display = (
+            display_name if display_name is not None else prop_name
+        )
 
         if prop_type == bool:
-            layout_row.prop(property_bone, f'["{prop_name}"]', text=prop_custom_name_display, toggle=True)
+            layout_row.prop(
+                property_bone,
+                f'["{prop_name}"]',
+                text=prop_custom_name_display,
+                toggle=True,
+            )
         elif prop_type in (int, float):
             slider = prop_type == float
-            layout_row.prop(property_bone, f'["{prop_name}"]', text=prop_custom_name_display, slider=slider)
+            layout_row.prop(
+                property_bone,
+                f'["{prop_name}"]',
+                text=prop_custom_name_display,
+                slider=slider,
+            )
 
     def draw(self, context):
         layout = self.layout

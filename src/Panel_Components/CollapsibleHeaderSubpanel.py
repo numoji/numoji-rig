@@ -6,7 +6,7 @@ class CollapsibleHeaderSubpanel(bpy.types.Panel):
     def poll(self, context):
         try:
             armature = context.view_layer.objects.active
-            return 'is_roblox_rig' in armature.data
+            return "is_roblox_rig" in armature.data
         except (AttributeError, KeyError, TypeError):
             return False
 

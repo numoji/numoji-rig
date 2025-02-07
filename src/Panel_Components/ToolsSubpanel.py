@@ -18,32 +18,52 @@ def get_snapped_matrix(bone_to_snap_to, bone_to_snap):
 
 
 snap = {
-    "FK": {
-        "ARM": arms_fk_to_ik,
-        "LEG": legs_fk_to_ik
-    },
-    "IK": {
-        "ARM": arms_ik_to_fk,
-        "LEG": legs_ik_to_fk
-    }
+    "FK": {"ARM": arms_fk_to_ik, "LEG": legs_fk_to_ik},
+    "IK": {"ARM": arms_ik_to_fk, "LEG": legs_ik_to_fk},
 }
 
 
 def insert_keyframe(armature, pose_bone, bone_name, prop_name=None):
     if prop_name is not None:
-        armature.keyframe_insert(data_path=f'pose.bones["{bone_name}"]["{prop_name}"]', group=bone_name, keytype="GENERATED")
+        armature.keyframe_insert(
+            data_path=f'pose.bones["{bone_name}"]["{prop_name}"]',
+            group=bone_name,
+            keytype="GENERATED",
+        )
     else:
-        armature.keyframe_insert(data_path=f'pose.bones["{bone_name}"].location', group=bone_name, keytype="GENERATED")
+        armature.keyframe_insert(
+            data_path=f'pose.bones["{bone_name}"].location',
+            group=bone_name,
+            keytype="GENERATED",
+        )
 
         if pose_bone.rotation_mode == "QUATERNION":
-            armature.keyframe_insert(data_path=f'pose.bones["{bone_name}"].rotation_quaternion', group=bone_name, keytype="GENERATED")
+            armature.keyframe_insert(
+                data_path=f'pose.bones["{bone_name}"].rotation_quaternion',
+                group=bone_name,
+                keytype="GENERATED",
+            )
         elif pose_bone.rotation_mode == "AXIS_ANGLE":
-            armature.keyframe_insert(data_path=f'pose.bones["{bone_name}"].rotation_axis_angle', group=bone_name, keytype="GENERATED")
+            armature.keyframe_insert(
+                data_path=f'pose.bones["{bone_name}"].rotation_axis_angle',
+                group=bone_name,
+                keytype="GENERATED",
+            )
         else:
-            armature.keyframe_insert(data_path=f'pose.bones["{bone_name}"].rotation_euler', group=bone_name, keytype="GENERATED")
+            armature.keyframe_insert(
+                data_path=f'pose.bones["{bone_name}"].rotation_euler',
+                group=bone_name,
+                keytype="GENERATED",
+            )
 
 
-def add_keyframe(pose_bone, prop_name=None, set_prev_constant=False, prev_value=None, set_constant=False):
+def add_keyframe(
+    pose_bone,
+    prop_name=None,
+    set_prev_constant=False,
+    prev_value=None,
+    set_constant=False,
+):
     armature = pose_bone.id_data
     bone_name = pose_bone.name
     current_frame = bpy.context.scene.frame_current
@@ -60,11 +80,14 @@ def add_keyframe(pose_bone, prop_name=None, set_prev_constant=False, prev_value=
         return
 
     for fcurve in action.fcurves.values():
-        if (prop_name is not None and fcurve.data_path == f'pose.bones["{bone_name}"]["{prop_name}"]'
-                or fcurve.data_path == f'pose.bones["{bone_name}"].location'
-                or fcurve.data_path == f'pose.bones["{bone_name}"].rotation_quaternion'
-                or fcurve.data_path == f'pose.bones["{bone_name}"].rotation_axis_angle'
-                or fcurve.data_path == f'pose.bones["{bone_name}"].rotation_euler'):
+        if (
+            prop_name is not None
+            and fcurve.data_path == f'pose.bones["{bone_name}"]["{prop_name}"]'
+            or fcurve.data_path == f'pose.bones["{bone_name}"].location'
+            or fcurve.data_path == f'pose.bones["{bone_name}"].rotation_quaternion'
+            or fcurve.data_path == f'pose.bones["{bone_name}"].rotation_axis_angle'
+            or fcurve.data_path == f'pose.bones["{bone_name}"].rotation_euler'
+        ):
 
             if set_constant:
                 for idx, keyframe in fcurve.keyframe_points.items():
@@ -75,14 +98,21 @@ def add_keyframe(pose_bone, prop_name=None, set_prev_constant=False, prev_value=
                 has_previous_keyframe = False
 
                 for idx, keyframe in fcurve.keyframe_points.items():
-                    if idx+1 <= len(fcurve.keyframe_points)-1 and fcurve.keyframe_points[idx+1].co[0] == current_frame:
+                    if (
+                        idx + 1 <= len(fcurve.keyframe_points) - 1
+                        and fcurve.keyframe_points[idx + 1].co[0] == current_frame
+                    ):
                         has_previous_keyframe = True
                         keyframe.interpolation = "CONSTANT"
 
-                prev_value = prev_value if prev_value is not None else fcurve.evaluate(current_frame-1)
+                prev_value = (
+                    prev_value
+                    if prev_value is not None
+                    else fcurve.evaluate(current_frame - 1)
+                )
 
                 if not has_previous_keyframe and frame_start < current_frame:
-                    bpy.context.scene.frame_current = current_frame-1
+                    bpy.context.scene.frame_current = current_frame - 1
                     bpy.context.view_layer.update()
                     insert_keyframe(armature, pose_bone, bone_name, prop_name)
                     bpy.context.scene.frame_current = current_frame
@@ -106,7 +136,7 @@ class IkSwitchAction(bpy.types.Operator):
     def poll(self, context):
         try:
             armature = context.view_layer.objects.active
-            return 'is_roblox_rig' in armature.data
+            return "is_roblox_rig" in armature.data
         except (AttributeError, KeyError, TypeError):
             return False
 
@@ -130,7 +160,9 @@ class IkSwitchAction(bpy.types.Operator):
         switch_from_collection_name = f"{self.snap_type}_{switch_from}.{self.snap_side}"
         switch_from_collection = armature.data.collections[switch_from_collection_name]
 
-        switch_to_collection_name = f"{self.snap_type}_{self.switch_to}.{self.snap_side}"
+        switch_to_collection_name = (
+            f"{self.snap_type}_{self.switch_to}.{self.snap_side}"
+        )
         switch_to_collection = armature.data.collections[switch_to_collection_name]
 
         if self.shift_pressed:
@@ -153,7 +185,9 @@ class IkSwitchAction(bpy.types.Operator):
         if self.ctrl_pressed:
             switch_from_map = snap_map = snap[switch_from][self.snap_type]
             for switch_bone_name in switch_from_map.keys():
-                switch_from_bone = bone = armature.pose.bones[switch_bone_name + "." + self.snap_side]
+                switch_from_bone = bone = armature.pose.bones[
+                    switch_bone_name + "." + self.snap_side
+                ]
                 add_keyframe(switch_from_bone, set_constant=True)
 
         for bone_name, matrix in matrices_to_write.items():
@@ -168,10 +202,24 @@ class IkSwitchAction(bpy.types.Operator):
 
 parents = {
     "BOARD_PARENT": ["ROOT_OFFSET", "ORG_HAND.L", "ORG_HAND.R"],
-    "HAND_IK_PARENT.L": ["ROOT_OFFSET", "RTG_BOARD_IK_HAND_OFFSET.L", "BOARD", "HIPS", "CHEST", "HEAD"],
-    "HAND_IK_PARENT.R": ["ROOT_OFFSET", "RTG_BOARD_IK_HAND_OFFSET.R", "BOARD", "HIPS", "CHEST", "HEAD"],
-    "FOOT_IK_PARENT.L": ["RTG_BOARD_IK_FOOT_OFFSET.L",  "ROOT_OFFSET"],
-    "FOOT_IK_PARENT.R": ["RTG_BOARD_IK_FOOT_OFFSET.R",  "ROOT_OFFSET"],
+    "HAND_IK_PARENT.L": [
+        "ROOT_OFFSET",
+        "RTG_BOARD_IK_HAND_OFFSET.L",
+        "BOARD",
+        "HIPS",
+        "CHEST",
+        "HEAD",
+    ],
+    "HAND_IK_PARENT.R": [
+        "ROOT_OFFSET",
+        "RTG_BOARD_IK_HAND_OFFSET.R",
+        "BOARD",
+        "HIPS",
+        "CHEST",
+        "HEAD",
+    ],
+    "FOOT_IK_PARENT.L": ["RTG_BOARD_IK_FOOT_OFFSET.L", "ROOT_OFFSET"],
+    "FOOT_IK_PARENT.R": ["RTG_BOARD_IK_FOOT_OFFSET.R", "ROOT_OFFSET"],
 }
 
 compensator_for_parent = {
@@ -210,6 +258,7 @@ LMB + Ctrl - Switch parent without keyframe
 
         pose_bone = armature.pose.bones[bone_name]
         original_matrix = pose_bone.matrix.copy()
+        original_basis = pose_bone.matrix_basis.copy()
 
         current_parent_idx = property_bone[prop_name]
         property_bone[prop_name] = parent_idx
@@ -217,14 +266,23 @@ LMB + Ctrl - Switch parent without keyframe
         if self.ctrl_pressed:
             return {"FINISHED"}
 
-        add_keyframe(property_bone, prop_name, set_prev_constant=True, prev_value=current_parent_idx, set_constant=True)
+        add_keyframe(
+            property_bone,
+            prop_name,
+            set_prev_constant=True,
+            prev_value=current_parent_idx,
+            set_constant=True,
+        )
 
         for fcurve in armature.animation_data.drivers.values():
-            fcurve.driver.expression += ''  # force update
+            fcurve.driver.expression += ""  # force update
         bpy.context.view_layer.update()
 
         moved_matrix = pose_bone.matrix.copy()
-        pose_bone.matrix_basis = pose_bone.matrix.inverted() @ original_matrix
+        pose_bone.matrix_basis = pose_bone.matrix_basis @ (
+            pose_bone.matrix.inverted() @ original_matrix
+        )
+
         bpy.context.view_layer.update()
 
         if compensator_bone is not None:
@@ -252,13 +310,19 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             switch_to = "IK"
             text = f"{side} {text} IK"
 
-        switch_op = row_layout.operator("roblox_rig_ui.ik_snap_action", text=text, icon="NONE")
+        switch_op = row_layout.operator(
+            "roblox_rig_ui.ik_snap_action", text=text, icon="NONE"
+        )
         switch_op.switch_to = switch_to
         switch_op.snap_type = snap_type
         switch_op.snap_side = side
 
-    def draw_reparent_operator(self, row_layout, bone_name, prop_name, parent_idx, text):
-        reparent_op = row_layout.operator("roblox_rig_ui.reparent_bone", text=text, icon="NONE")
+    def draw_reparent_operator(
+        self, row_layout, bone_name, prop_name, parent_idx, text
+    ):
+        reparent_op = row_layout.operator(
+            "roblox_rig_ui.reparent_bone", text=text, icon="NONE"
+        )
         reparent_op.bone_name = bone_name
         reparent_op.prop_name = prop_name
         reparent_op.parent_idx = parent_idx
@@ -294,49 +358,82 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
         if reparent_group_obj.visible:
             board_row = reparent_layout.row(align=True)
             board_row.label(text="Board")
-            self.draw_reparent_operator(board_row, "BOARD_PARENT", "BOARD_PARENT", 0, "None")
+            self.draw_reparent_operator(
+                board_row, "BOARD_PARENT", "BOARD_PARENT", 0, "None"
+            )
             board_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(board_row, "BOARD_PARENT", "BOARD_PARENT", 1, "L Hand")
+            self.draw_reparent_operator(
+                board_row, "BOARD_PARENT", "BOARD_PARENT", 1, "L Hand"
+            )
             board_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(board_row, "BOARD_PARENT", "BOARD_PARENT", 2, "R Hand")
+            self.draw_reparent_operator(
+                board_row, "BOARD_PARENT", "BOARD_PARENT", 2, "R Hand"
+            )
 
             reparent_layout.separator(factor=vertical_spacing)
             l_hand_row = reparent_layout.row(align=True)
             l_hand_row.label(text="L Hand")
-            self.draw_reparent_operator(l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 0, "None")
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 0, "None"
+            )
             l_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 1, "Board")
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 1, "Board"
+            )
             l_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 2, "Hips")
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 2, "Hips"
+            )
             l_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 3, "Chest")
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 3, "Chest"
+            )
             l_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 4, "Head")
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 4, "Head"
+            )
 
             reparent_layout.separator(factor=vertical_spacing)
             r_hand_row = reparent_layout.row(align=True)
             r_hand_row.label(text="R Hand")
-            self.draw_reparent_operator(r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 0, "None")
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 0, "None"
+            )
             r_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 1, "Board")
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 1, "Board"
+            )
             r_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "Hips")
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "Hips"
+            )
             r_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 3, "Chest")
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 3, "Chest"
+            )
             r_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 4, "Head")
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 4, "Head"
+            )
 
             reparent_layout.separator(factor=vertical_spacing)
             l_foot_row = reparent_layout.row(align=True)
             l_foot_row.label(text="L Foot")
-            self.draw_reparent_operator(l_foot_row, "FOOT_IK_PARENT.L", "FOOT_PARENT.L", 0, "Board")
+            self.draw_reparent_operator(
+                l_foot_row, "FOOT_IK_PARENT.L", "FOOT_PARENT.L", 0, "Board"
+            )
             l_foot_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(l_foot_row, "FOOT_IK_PARENT.L", "FOOT_PARENT.L", 1, "None")
+            self.draw_reparent_operator(
+                l_foot_row, "FOOT_IK_PARENT.L", "FOOT_PARENT.L", 1, "None"
+            )
 
             reparent_layout.separator(factor=vertical_spacing)
             r_foot_row = reparent_layout.row(align=True)
             r_foot_row.label(text="R Foot")
-            self.draw_reparent_operator(r_foot_row, "FOOT_IK_PARENT.R", "FOOT_PARENT.R", 0, "Board")
+            self.draw_reparent_operator(
+                r_foot_row, "FOOT_IK_PARENT.R", "FOOT_PARENT.R", 0, "Board"
+            )
             r_foot_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(r_foot_row, "FOOT_IK_PARENT.R", "FOOT_PARENT.R", 1, "None")
-
+            self.draw_reparent_operator(
+                r_foot_row, "FOOT_IK_PARENT.R", "FOOT_PARENT.R", 1, "None"
+            )

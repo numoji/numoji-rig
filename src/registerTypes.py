@@ -9,20 +9,17 @@ class RobloxRigCollapsibleGroup(bpy.types.PropertyGroup):
 def register_attributes():
     if not hasattr(bpy.types.Armature, "roblox_rig_bone_groups"):
         bpy.types.Armature.roblox_rig_bone_groups = bpy.props.CollectionProperty(
-            type=RobloxRigCollapsibleGroup,
-            options={"HIDDEN"}
+            type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
         )
 
     if not hasattr(bpy.types.Armature, "roblox_rig_property_groups"):
         bpy.types.Armature.roblox_rig_property_groups = bpy.props.CollectionProperty(
-            type=RobloxRigCollapsibleGroup,
-            options={"HIDDEN"}
+            type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
         )
 
     if not hasattr(bpy.types.Armature, "roblox_rig_tool_groups"):
         bpy.types.Armature.roblox_rig_tool_groups = bpy.props.CollectionProperty(
-            type=RobloxRigCollapsibleGroup,
-            options={"HIDDEN"}
+            type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
         )
 
     if not hasattr(bpy.types.Armature, "ui_vertical_spacing"):
@@ -31,7 +28,7 @@ def register_attributes():
             min=0.0,
             max=1.0,
             description="Vertical spacing between buttons",
-            options={"HIDDEN"}
+            options={"HIDDEN"},
         )
 
     if not hasattr(bpy.types.Armature, "ui_horizontal_spacing"):
@@ -40,13 +37,12 @@ def register_attributes():
             min=0.0,
             max=1.0,
             description="Horizontal spacing between buttons",
-            options={"HIDDEN"}
+            options={"HIDDEN"},
         )
 
     if not hasattr(bpy.types.Armature, "is_roblox_rig"):
         bpy.types.Armature.is_roblox_rig = bpy.props.BoolProperty(
-            default=False,
-            options={"HIDDEN"}
+            default=False, options={"HIDDEN"}
         )
 
 

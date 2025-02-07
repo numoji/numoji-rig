@@ -1,5 +1,9 @@
 import bpy
-from .Panel_Components.BoneCollectionsSubpanel import BoneCollectionsSubpanel, BoneCollectionAction, BoneCollectionToggleProp
+from .Panel_Components.BoneCollectionsSubpanel import (
+    BoneCollectionsSubpanel,
+    BoneCollectionAction,
+    BoneCollectionToggleProp,
+)
 from .Panel_Components.BonePropertiesSubpanel import BonePropertiesSubpanel
 from .registerTypes import RobloxRigCollapsibleGroup
 from .Panel_Components.UiMainPanel import UiMainPanel, UiSpacingConfigure
@@ -20,16 +24,18 @@ class InitializeArmatures(bpy.types.Operator):
     bl_description = "Initialize armatures with Roblox Rig data"
 
     def execute(self, context):
+        print("init!")
         for armature_data in bpy.data.armatures:
             if armature_data and hasattr(armature_data, "is_roblox_rig"):
                 # Setup bone groups
                 if not hasattr(armature_data, "roblox_rig_bone_groups"):
                     armature_data.roblox_rig_bone_groups = bpy.props.CollectionProperty(
-                        type=RobloxRigCollapsibleGroup,
-                        options={"HIDDEN"}
+                        type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
                     )
                 for group in bone_groups:
-                    if is_group_on_armature(armature_data, "roblox_rig_bone_groups", group["name"]):
+                    if is_group_on_armature(
+                        armature_data, "roblox_rig_bone_groups", group["name"]
+                    ):
                         continue
                     new_group = armature_data.roblox_rig_bone_groups.add()
                     new_group.name = group["name"]
@@ -37,13 +43,18 @@ class InitializeArmatures(bpy.types.Operator):
 
                 # Setup property groups
                 if not hasattr(armature_data, "roblox_rig_property_groups"):
-                    armature_data.roblox_rig_property_groups = bpy.props.CollectionProperty(
-                        type=RobloxRigCollapsibleGroup,
-                        options={"HIDDEN"}
+                    armature_data.roblox_rig_property_groups = (
+                        bpy.props.CollectionProperty(
+                            type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
+                        )
                     )
                 for group in property_groups:
-                    if is_group_on_armature(armature_data, "roblox_rig_property_groups", group["name"]):
+                    if is_group_on_armature(
+                        armature_data, "roblox_rig_property_groups", group["name"]
+                    ):
+                        print('has prop group :D', group)
                         continue
+
                     new_group = armature_data.roblox_rig_property_groups.add()
                     new_group.name = group["name"]
                     new_group.visible = True
@@ -51,12 +62,13 @@ class InitializeArmatures(bpy.types.Operator):
                 # Setup tool groups
                 if not hasattr(armature_data, "roblox_rig_tool_groups"):
                     armature_data.roblox_rig_tool_groups = bpy.props.CollectionProperty(
-                        type=RobloxRigCollapsibleGroup,
-                        options={"HIDDEN"}
+                        type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
                     )
 
                 for group in tool_groups:
-                    if is_group_on_armature(armature_data, "roblox_rig_property_groups", group["name"]):
+                    if is_group_on_armature(
+                        armature_data, "roblox_rig_property_groups", group["name"]
+                    ):
                         continue
                     new_group = armature_data.roblox_rig_tool_groups.add()
                     new_group.name = group["name"]
@@ -69,7 +81,7 @@ class InitializeArmatures(bpy.types.Operator):
                         min=0.0,
                         max=1.0,
                         description="Vertical spacing between buttons",
-                        options={"HIDDEN"}
+                        options={"HIDDEN"},
                     )
 
                 if not hasattr(armature_data, "ui_horizontal_spacing"):
@@ -78,7 +90,7 @@ class InitializeArmatures(bpy.types.Operator):
                         min=0.0,
                         max=1.0,
                         description="Horizontal spacing between buttons",
-                        options={"HIDDEN"}
+                        options={"HIDDEN"},
                     )
         return {"FINISHED"}
 
