@@ -70,6 +70,9 @@ def add_keyframe(
     frame_start = bpy.context.scene.frame_start
     action = armature.animation_data.action
 
+    if action is None:
+        return
+
     if bone_name not in action.groups.keys():
         group = action.groups.new(bone_name)
         group.use_pin = True
@@ -201,7 +204,6 @@ class IkSwitchAction(bpy.types.Operator):
 
 
 parents = {
-    "BOARD_PARENT": ["ROOT_OFFSET", "ORG_HAND.L", "ORG_HAND.R"],
     "HAND_IK_PARENT.L": [
         "ROOT_OFFSET",
         "RTG_BOARD_IK_HAND_OFFSET.L",
@@ -218,14 +220,9 @@ parents = {
         "CHEST",
         "HEAD",
     ],
-    "FOOT_IK_PARENT.L": ["RTG_BOARD_IK_FOOT_OFFSET.L", "ROOT_OFFSET"],
-    "FOOT_IK_PARENT.R": ["RTG_BOARD_IK_FOOT_OFFSET.R", "ROOT_OFFSET"],
 }
 
-compensator_for_parent = {
-    "ORG_HAND.L": "PARENT_DISCREPANCY_COMPENSATOR.L",
-    "ORG_HAND.R": "PARENT_DISCREPANCY_COMPENSATOR.R",
-}
+compensator_for_parent = {}
 
 
 class ReparentBone(bpy.types.Operator):
@@ -263,16 +260,14 @@ LMB + Ctrl - Switch parent without keyframe
         current_parent_idx = property_bone[prop_name]
         property_bone[prop_name] = parent_idx
 
-        if self.ctrl_pressed:
-            return {"FINISHED"}
-
-        add_keyframe(
-            property_bone,
-            prop_name,
-            set_prev_constant=True,
-            prev_value=current_parent_idx,
-            set_constant=True,
-        )
+        if not self.ctrl_pressed:
+            add_keyframe(
+                property_bone,
+                prop_name,
+                set_prev_constant=True,
+                prev_value=current_parent_idx,
+                set_constant=True,
+            )
 
         for fcurve in armature.animation_data.drivers.values():
             fcurve.driver.expression += ""  # force update
@@ -288,7 +283,9 @@ LMB + Ctrl - Switch parent without keyframe
         if compensator_bone is not None:
             compensator_bone.matrix = moved_matrix
             add_keyframe(compensator_bone, set_prev_constant=True, set_constant=True)
-        add_keyframe(pose_bone, set_prev_constant=True, set_constant=True)
+
+        if not self.ctrl_pressed:
+            add_keyframe(pose_bone, set_prev_constant=True, set_constant=True)
 
         return {"FINISHED"}
 
@@ -356,29 +353,11 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
         reparent_group_obj = armature.data.roblox_rig_tool_groups[1]
         self.draw_collapse_header(reparent_layout, reparent_group_obj)
         if reparent_group_obj.visible:
-            board_row = reparent_layout.row(align=True)
-            board_row.label(text="Board")
-            self.draw_reparent_operator(
-                board_row, "BOARD_PARENT", "BOARD_PARENT", 0, "None"
-            )
-            board_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(
-                board_row, "BOARD_PARENT", "BOARD_PARENT", 1, "L Hand"
-            )
-            board_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(
-                board_row, "BOARD_PARENT", "BOARD_PARENT", 2, "R Hand"
-            )
-
             reparent_layout.separator(factor=vertical_spacing)
             l_hand_row = reparent_layout.row(align=True)
             l_hand_row.label(text="L Hand")
             self.draw_reparent_operator(
                 l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 0, "None"
-            )
-            l_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(
-                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 1, "Board"
             )
             l_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
@@ -401,10 +380,6 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             )
             r_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
-                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 1, "Board"
-            )
-            r_hand_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "Hips"
             )
             r_hand_row.separator(factor=horizontal_spacing)
@@ -414,26 +389,4 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             r_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 4, "Head"
-            )
-
-            reparent_layout.separator(factor=vertical_spacing)
-            l_foot_row = reparent_layout.row(align=True)
-            l_foot_row.label(text="L Foot")
-            self.draw_reparent_operator(
-                l_foot_row, "FOOT_IK_PARENT.L", "FOOT_PARENT.L", 0, "Board"
-            )
-            l_foot_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(
-                l_foot_row, "FOOT_IK_PARENT.L", "FOOT_PARENT.L", 1, "None"
-            )
-
-            reparent_layout.separator(factor=vertical_spacing)
-            r_foot_row = reparent_layout.row(align=True)
-            r_foot_row.label(text="R Foot")
-            self.draw_reparent_operator(
-                r_foot_row, "FOOT_IK_PARENT.R", "FOOT_PARENT.R", 0, "Board"
-            )
-            r_foot_row.separator(factor=horizontal_spacing)
-            self.draw_reparent_operator(
-                r_foot_row, "FOOT_IK_PARENT.R", "FOOT_PARENT.R", 1, "None"
             )

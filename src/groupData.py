@@ -81,7 +81,6 @@ property_groups = [
         "rows": [
             [("HAND_PARENT.L", "L Hand Parent"), ("HAND_PARENT.R", "R Hand Parent")],
             [("FOOT_PARENT.L", "L Leg Parent"), ("FOOT_PARENT.R", "R Leg Parent")],
-            [("BOARD_PARENT", "Board Parent")],
         ],
     },
 ]
