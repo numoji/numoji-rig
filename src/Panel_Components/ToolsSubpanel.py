@@ -1,4 +1,5 @@
 import bpy
+import mathutils
 from .CollapsibleHeaderSubpanel import CollapsibleHeaderSubpanel
 from src.snapMap import arms_fk_to_ik, arms_ik_to_fk, legs_fk_to_ik, legs_ik_to_fk
 from src.groupData import properties_bone_name
@@ -228,15 +229,14 @@ compensator_for_parent = {}
 class ReparentBone(bpy.types.Operator):
     bl_idname = "roblox_rig_ui.reparent_bone"
     bl_label = "Reparent Bone Action"
-    bl_description = """LMB - Switch Parent & insert keyframe
-LMB + Ctrl - Switch parent without keyframe
-"""
+    bl_description = """LMB - Switch parent
++ Shift - Clear parent offset"""
     bone_name: bpy.props.StringProperty()  # type: ignore
     prop_name: bpy.props.StringProperty()  # type: ignore
     parent_idx: bpy.props.IntProperty()  # type: ignore
 
     def invoke(self, context, event):
-        self.ctrl_pressed = event.ctrl
+        self.shift_pressed = event.shift
         return self.execute(context)
 
     def execute(self, context):
@@ -255,37 +255,36 @@ LMB + Ctrl - Switch parent without keyframe
 
         pose_bone = armature.pose.bones[bone_name]
         original_matrix = pose_bone.matrix.copy()
-        original_basis = pose_bone.matrix_basis.copy()
 
         current_parent_idx = property_bone[prop_name]
         property_bone[prop_name] = parent_idx
 
-        if not self.ctrl_pressed:
-            add_keyframe(
-                property_bone,
-                prop_name,
-                set_prev_constant=True,
-                prev_value=current_parent_idx,
-                set_constant=True,
-            )
+        add_keyframe(
+            property_bone,
+            prop_name,
+            set_prev_constant=True,
+            prev_value=current_parent_idx,
+            set_constant=True,
+        )
 
         for fcurve in armature.animation_data.drivers.values():
             fcurve.driver.expression += ""  # force update
         bpy.context.view_layer.update()
 
-        moved_matrix = pose_bone.matrix.copy()
-        pose_bone.matrix_basis = pose_bone.matrix_basis @ (
-            pose_bone.matrix.inverted() @ original_matrix
-        )
+        if self.shift_pressed:
+            pose_bone.matrix_basis = mathutils.Matrix.Identity(4)
+        else:
+            moved_matrix = pose_bone.matrix.copy()
+            pose_bone.matrix_basis = pose_bone.matrix_basis @ (
+                pose_bone.matrix.inverted() @ original_matrix
+            )
 
         bpy.context.view_layer.update()
 
+        add_keyframe(pose_bone, set_prev_constant=True, set_constant=True)
         if compensator_bone is not None:
             compensator_bone.matrix = moved_matrix
             add_keyframe(compensator_bone, set_prev_constant=True, set_constant=True)
-
-        if not self.ctrl_pressed:
-            add_keyframe(pose_bone, set_prev_constant=True, set_constant=True)
 
         return {"FINISHED"}
 
