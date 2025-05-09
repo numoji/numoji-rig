@@ -389,10 +389,10 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 1, "L. Tool"
             )
+            r_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "R. Tool"
             )
-            r_hand_row.separator(factor=horizontal_spacing)
             r_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "Hips"

@@ -18,13 +18,13 @@ def is_group_on_armature(armature_data, group_collection, group_name):
     return False
 
 
+# SELF NOTE: You need to manually press F3 and run this operator to update the rig!!
 class InitializeArmatures(bpy.types.Operator):
     bl_idname = "roblox_rig_ui.initialize_armatures"
     bl_label = "Initialize Armatures"
     bl_description = "Initialize armatures with Roblox Rig data"
 
     def execute(self, context):
-        print("init!")
         for armature_data in bpy.data.armatures:
             if armature_data and hasattr(armature_data, "is_roblox_rig"):
                 # Setup bone groups
@@ -32,11 +32,10 @@ class InitializeArmatures(bpy.types.Operator):
                     armature_data.roblox_rig_bone_groups = bpy.props.CollectionProperty(
                         type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
                     )
+
+                armature_data.roblox_rig_bone_groups.clear()
+
                 for group in bone_groups:
-                    if is_group_on_armature(
-                        armature_data, "roblox_rig_bone_groups", group["name"]
-                    ):
-                        continue
                     new_group = armature_data.roblox_rig_bone_groups.add()
                     new_group.name = group["name"]
                     new_group.visible = True
@@ -48,13 +47,9 @@ class InitializeArmatures(bpy.types.Operator):
                             type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
                         )
                     )
-                for group in property_groups:
-                    if is_group_on_armature(
-                        armature_data, "roblox_rig_property_groups", group["name"]
-                    ):
-                        print('has prop group :D', group)
-                        continue
 
+                armature_data.roblox_rig_property_groups.clear()
+                for group in property_groups:
                     new_group = armature_data.roblox_rig_property_groups.add()
                     new_group.name = group["name"]
                     new_group.visible = True
@@ -65,11 +60,9 @@ class InitializeArmatures(bpy.types.Operator):
                         type=RobloxRigCollapsibleGroup, options={"HIDDEN"}
                     )
 
+                armature_data.roblox_rig_tool_groups.clear()
+
                 for group in tool_groups:
-                    if is_group_on_armature(
-                        armature_data, "roblox_rig_property_groups", group["name"]
-                    ):
-                        continue
                     new_group = armature_data.roblox_rig_tool_groups.add()
                     new_group.name = group["name"]
                     new_group.visible = True
@@ -96,6 +89,7 @@ class InitializeArmatures(bpy.types.Operator):
 
 
 def register_classes():
+    bpy.utils.register_class(InitializeArmatures)
 
     bpy.utils.register_class(UiSpacingConfigure)
     bpy.utils.register_class(UiMainPanel)
@@ -111,10 +105,9 @@ def register_classes():
     bpy.utils.register_class(ReparentBone)
     bpy.utils.register_class(ToolsSubpanel)
 
-    bpy.utils.register_class(InitializeArmatures)
-
 
 def unregister_classes():
+    bpy.utils.unregister_class(InitializeArmatures)
     bpy.utils.unregister_class(BoneCollectionToggleProp)
     bpy.utils.unregister_class(BoneCollectionAction)
     bpy.utils.unregister_class(UiSpacingConfigure)
@@ -125,4 +118,7 @@ def unregister_classes():
     bpy.utils.unregister_class(IkSwitchAction)
     bpy.utils.unregister_class(ReparentBone)
     bpy.utils.unregister_class(ToolsSubpanel)
-    bpy.utils.unregister_class(InitializeArmatures)
+
+
+print("---- Restart! ----")
+# bpy.ops.roblox_rig_ui.initialize_armatures()

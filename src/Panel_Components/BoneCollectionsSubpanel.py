@@ -218,7 +218,7 @@ class BoneCollectionsSubpanel(CollapsibleHeaderSubpanel):
             self.selected_collections = set()
 
         for idx, group in enumerate(bone_groups):
-            group_obj = armature.data.roblox_rig_bone_groups[idx + 1]
+            group_obj = armature.data.roblox_rig_bone_groups[idx]
             self.draw_collapse_header(collection_groups_layout, group_obj)
             if group_obj.visible:
                 # group_layout = collection_groups_layout.column()

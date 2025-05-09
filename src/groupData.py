@@ -35,6 +35,16 @@ bone_groups = [
             [("LEG_IK.L", "NONE", "L Leg IK"), ("LEG_IK.R", "NONE", "R Leg IK", 0.9)],
         ],
     },
+    {
+        "name": "Tools",
+        "rows": [
+            [("TOOL_FK.L", "NONE", "L Tool FK"), ("TOOL_FK.R", "NONE", "R Tool FK")],
+            [
+                ("TOOL_IK.L", "NONE", "L Tool IK"),
+                ("TOOL_IK.R", "NONE", "R Tool IK", 0.9),
+            ],
+        ],
+    },
 ]
 
 properties_bone_name = "PROPERTIES"
@@ -76,17 +86,16 @@ property_groups = [
             ],
         ],
     },
-	{
+    {
         "name": "Tools",
         "rows": [
             [("TOOL_FK_IK.L", "L Tool FK ⇔ IK"), ("TOOL_FK_IK.R", "R Tool FK ⇔ IK")],
         ],
     },
     {
-        "name": "Parent Properties",
+        "name": "Parent",
         "rows": [
             [("HAND_PARENT.L", "L Hand Parent"), ("HAND_PARENT.R", "R Hand Parent")],
-            [("FOOT_PARENT.L", "L Leg Parent"), ("FOOT_PARENT.R", "R Leg Parent")],
         ],
     },
 ]
