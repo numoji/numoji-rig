@@ -40,20 +40,20 @@ bone_groups = [
 properties_bone_name = "PROPERTIES"
 property_groups = [
     {
-        "name": "Head Properties",
+        "name": "Head",
         "rows": [
             [("HEAD_TRACK", "Track"), ("HEAD_FOLLOW", "Follow Torso")],
         ],
     },
     {
-        "name": "Body Properties",
+        "name": "Body",
         "rows": [
             [("SHOULDER_INFLUENCE", "Shoulder Twist Influence")],
             [("CENTER_MASS_PIVOT", "Pivot around Center Mass")],
         ],
     },
     {
-        "name": "Arms Properties",
+        "name": "Arms",
         "rows": [
             [
                 ("ARM_FOLLOW.L", "L Follow Shoulder"),
@@ -67,13 +67,19 @@ property_groups = [
         ],
     },
     {
-        "name": "Legs Properties",
+        "name": "Legs",
         "rows": [
             [("LEG_FK_IK.L", "L Leg FK ⇔ IK"), ("LEG_FK_IK.R", "R Leg FK ⇔ IK")],
             [
                 ("LEG_IK_STRETCH.L", "L Leg Stretch Bias"),
                 ("LEG_IK_STRETCH.R", "R Leg Stretch Bias"),
             ],
+        ],
+    },
+	{
+        "name": "Tools",
+        "rows": [
+            [("TOOL_FK_IK.L", "L Tool FK ⇔ IK"), ("TOOL_FK_IK.R", "R Tool FK ⇔ IK")],
         ],
     },
     {

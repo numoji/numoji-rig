@@ -360,15 +360,23 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             )
             l_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
-                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 2, "Hips"
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 1, "L. Tool"
             )
             l_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
-                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 3, "Chest"
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 2, "R. Tool"
             )
             l_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
-                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 4, "Head"
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 3, "Hips"
+            )
+            l_hand_row.separator(factor=horizontal_spacing)
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 4, "Chest"
+            )
+            l_hand_row.separator(factor=horizontal_spacing)
+            self.draw_reparent_operator(
+                l_hand_row, "HAND_IK_PARENT.L", "HAND_PARENT.L", 5, "Head"
             )
 
             reparent_layout.separator(factor=vertical_spacing)
@@ -377,6 +385,14 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 0, "None"
             )
+            r_hand_row.separator(factor=horizontal_spacing)
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 1, "L. Tool"
+            )
+            self.draw_reparent_operator(
+                r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "R. Tool"
+            )
+            r_hand_row.separator(factor=horizontal_spacing)
             r_hand_row.separator(factor=horizontal_spacing)
             self.draw_reparent_operator(
                 r_hand_row, "HAND_IK_PARENT.R", "HAND_PARENT.R", 2, "Hips"
