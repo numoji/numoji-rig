@@ -1,7 +1,7 @@
 import bpy
 import mathutils
 from .CollapsibleHeaderSubpanel import CollapsibleHeaderSubpanel
-from src.snapMap import arms_fk_to_ik, arms_ik_to_fk, legs_fk_to_ik, legs_ik_to_fk
+from src.snapMap import arms_fk_to_ik, arms_ik_to_fk, legs_fk_to_ik, legs_ik_to_fk, tools_fk_to_ik, tools_ik_to_fk
 from src.groupData import properties_bone_name
 
 
@@ -19,8 +19,8 @@ def get_snapped_matrix(bone_to_snap_to, bone_to_snap):
 
 
 snap = {
-    "FK": {"ARM": arms_fk_to_ik, "LEG": legs_fk_to_ik},
-    "IK": {"ARM": arms_ik_to_fk, "LEG": legs_ik_to_fk},
+    "FK": {"ARM": arms_fk_to_ik, "LEG": legs_fk_to_ik, "TOOL": tools_fk_to_ik},
+    "IK": {"ARM": arms_ik_to_fk, "LEG": legs_ik_to_fk, "TOOL": tools_ik_to_fk},
 }
 
 
@@ -156,7 +156,7 @@ class IkSwitchAction(bpy.types.Operator):
         property_bone = armature.pose.bones[properties_bone_name]
 
         current_prop_value = property_bone[prop_name]
-        property_bone[prop_name] = 1 if self.switch_to == "IK" else 0
+        property_bone[prop_name] = 1.0 if self.switch_to == "IK" else 0.0
         if self.ctrl_pressed:
             add_keyframe(property_bone, prop_name, True, current_prop_value)
 
@@ -347,6 +347,12 @@ class ToolsSubpanel(CollapsibleHeaderSubpanel):
             self.draw_snap_operator(leg_row, "Leg switch to", "L", "LEG")
             leg_row.separator(factor=horizontal_spacing)
             self.draw_snap_operator(leg_row, "Leg switch to", "R", "LEG")
+
+            ikfk_layout.label(text="Tools FK ⇔ IK Snap")
+            tool_row = ikfk_layout.row(align=True)
+            self.draw_snap_operator(tool_row, "Tool switch to", "L", "TOOL")
+            tool_row.separator(factor=horizontal_spacing)
+            self.draw_snap_operator(tool_row, "Tool switch to", "R", "TOOL")
 
         reparent_layout = layout.column(align=True)
         reparent_group_obj = armature.data.roblox_rig_tool_groups[1]

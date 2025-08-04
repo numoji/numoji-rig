@@ -20,3 +20,11 @@ legs_ik_to_fk = {
     "FOOT_IK": "FOOT_FK",
     "LEG_IK_POLE": "MCH_LEG_FK_POLE_SNAP",
 }
+
+tools_ik_to_fk = {
+	"TOOL_IK": "TOOL_OFFSET_FK",
+}
+
+tools_fk_to_ik = {
+	"TOOL_OFFSET_FK": "TOOL_IK",
+}
